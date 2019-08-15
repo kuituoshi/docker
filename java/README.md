@@ -11,3 +11,4 @@
 
 * Add standard java certs
 * Add security jce_policy jar
+* Ant & Maven are installed in jdk by default
