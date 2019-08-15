@@ -1,0 +1,10 @@
+nexus:
+  image: changel/nexus:2.14.1
+  restart: always
+  container_name: nexus
+
+  ports:
+   - "8081:8081"
+  privileged: true
+  volumes:
+   - /data/nexus:/usr/local/sonatype-work

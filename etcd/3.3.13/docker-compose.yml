@@ -1,0 +1,56 @@
+version: "2.0"
+services:
+ etcd-node-1:
+  image: changel.cn/etcd:3.3.13
+  restart: always
+  container_name: etcd-node-1
+
+  ports:
+   - "23791:2379"
+  environment:
+   - "ETCD_NAME=etcd-node-1"
+   - "ETCD_INITIAL_CLUSTER=etcd-node-1=http://etcd-node-1:2380,etcd-node-2=http://etcd-node-2:2380,etcd-node-3=http://etcd-node-3:2380"
+  volumes:
+   - /data/etcd/etcd-node-1:/var/lib/etcd
+  networks:
+    sys-default:
+      aliases:
+       - etcd-node-1
+
+ etcd-node-2:
+  image: changel.cn/etcd:3.3.13
+  restart: always
+  container_name: etcd-node-2
+
+  ports:
+   - "23792:2379"
+  environment:
+   - "ETCD_NAME=etcd-node-2"
+   - "ETCD_INITIAL_CLUSTER=etcd-node-1=http://etcd-node-1:2380,etcd-node-2=http://etcd-node-2:2380,etcd-node-3=http://etcd-node-3:2380"
+  volumes:
+   - /data/etcd/etcd-node-2:/var/lib/etcd
+  networks:
+    sys-default:
+      aliases:
+       - etcd-node-2
+
+ etcd-node-3:
+  image: changel.cn/etcd:3.3.13
+  restart: always
+  container_name: etcd-node-3
+
+  ports:
+   - "23793:2379"
+  environment:
+   - "ETCD_NAME=etcd-node-3"
+   - "ETCD_INITIAL_CLUSTER=etcd-node-1=http://etcd-node-1:2380,etcd-node-2=http://etcd-node-2:2380,etcd-node-3=http://etcd-node-3:2380"
+  volumes:
+   - /data/etcd/etcd-node-3:/var/lib/etcd
+  networks:
+    sys-default:
+      aliases:
+       - etcd-node-3
+
+networks:
+  sys-default:
+    external: true

@@ -1,0 +1,10 @@
+activemq:
+  image: changel/activemq:5.14.5
+  restart: always
+  container_name: activemq
+
+  ports:
+   - "61613:61613"
+   - "8161:8161"
+  volumes:
+   - /data/activemq:/usr/local/activemq/data

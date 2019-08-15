@@ -1,0 +1,58 @@
+version: "2.0"
+services:
+ master:
+  image: changel/mysql:5.7
+  restart: always
+  container_name: master
+
+  ports:
+   - "3311:3306"
+  environment:
+   - "MYSQL_ROOT_PASSWORD=88888888"
+   - "SET_MYSQLD_MASTER=yes"
+   - "MYSQLD_SERVER_ID=11"
+  volumes:
+   - /data/mysql/master:/var/lib/mysql
+  networks:
+    mysql-test:
+      aliases:
+       - masterdb
+
+ slave:
+  image: changel/mysql:5.7
+  restart: always
+  container_name: slave
+
+  ports:
+   - "3321:3306"
+  environment:
+   - "MYSQL_ROOT_PASSWORD=88888888"
+   - "SET_MYSQLD_SLAVE=yes"
+   - "SET_MYSQLD_PULL_PASSWORD=88888888"
+   - "MYSQLD_SERVER_ID=21"
+  volumes:
+   - /data/mysql/slave:/var/lib/mysql
+  networks:
+    mysql-test:
+      aliases:
+       - masterdb
+
+ slave2:
+  image: changel/mysql:5.7
+  restart: always
+  container_name: slave2
+
+  ports:
+   - "3322:3306"
+  environment:
+   - "MYSQL_ROOT_PASSWORD=88888888"
+   - "SET_MYSQLD_SLAVE=yes"
+   - "MYSQLD_SERVER_ID=22"
+  volumes:
+   - /data/mysql/slave2:/var/lib/mysql
+  networks:
+   - mysql-test
+
+networks:
+  mysql-test:
+    external: true

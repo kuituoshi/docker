@@ -1,0 +1,19 @@
+version: "2.0"
+services:
+ etcd-node:
+  image: changel.cn/etcd:3.3.13
+  restart: always
+  container_name: etcd-node
+
+  ports:
+   - "2379:2379"
+  environment:
+   - "ETCD_NAME=etcd-node"
+  volumes:
+   - /data/etcd/etcd-node:/var/lib/etcd
+  networks:
+   - sys-default
+
+networks:
+  sys-default:
+    external: true

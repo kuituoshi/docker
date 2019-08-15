@@ -1,0 +1,152 @@
+version: "2.2"
+
+services:
+ redis-node-1:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-1
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.101
+  volumes:
+    - /data/redis/node-1:/data
+
+ redis-node-2:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-2
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.102
+  volumes:
+    - /data/redis/node-2:/data
+
+ redis-node-3:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-3
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.103
+  volumes:
+    - /data/redis/node-3:/data
+
+ redis-node-4:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-4
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.104
+  volumes:
+    - /data/redis/node-4:/data
+
+ redis-node-5:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-5
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.105
+  volumes:
+    - /data/redis/node-5:/data
+
+ redis-node-6:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-6
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.106
+  volumes:
+    - /data/redis/node-6:/
+
+ redis-node-7:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-7
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.107
+  volumes:
+    - /data/redis/node-7:/data
+
+ redis-node-8:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-8
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.108
+  volumes:
+    - /data/redis/node-8:/data
+
+ redis-node-9:
+  image: changel/redis:3.2.12
+  restart: always
+  container_name: redis-node-9
+
+  environment:
+    #- "SET_REDIS_REQUIREPASS=88888888"
+    - "SET_REDIS_CLUSTER_ENABLED=yes"
+    - "SET_REDIS_CLUSTER_CONFIG_FILE=/tmp/redis-cluster.cnf"
+    - "SET_REDIS_CLUSTER_NODE_TIMEOUT=5000"
+  networks:
+    user-define:
+      ipv4_address: 10.9.1.109
+  volumes:
+    - /data/redis/node-9:/data
+
+networks:
+  user-define:
+    ipam:
+      config:
+        - subnet: 10.9.1.0/24
