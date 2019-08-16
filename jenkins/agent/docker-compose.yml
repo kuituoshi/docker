@@ -1,0 +1,11 @@
+jenkins-agent:
+  image: changel/jenkins:agent
+  restart: always
+  container_name: jenkins-agent
+
+  ports:
+   - "12200:22"
+  volumes:
+   - /data/artifacts:/data/artifacts
+   - /data/ansible:/data/ansible
+   - /home/ansiblemgr/.docker:/root/.docker
