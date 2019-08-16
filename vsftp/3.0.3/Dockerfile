@@ -1,11 +1,6 @@
-FROM changel.cn/alpine:3.8
+FROM changel/alpine:3.8
 
 MAINTAINER changel <changel@changel.cn>
-
-# install timezone
-RUN set -ex \
-  && apk add --no-cache tzdata \
-  && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN set -ex \
   && apk add --no-cache vsftpd curl

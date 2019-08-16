@@ -1,4 +1,4 @@
-FROM changel.cn/java:jre8.144.jce
+FROM changel/java:jre8.144.jce
 
 ARG kafka_version=2.12-2.0.0
 

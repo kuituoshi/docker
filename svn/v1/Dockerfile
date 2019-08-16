@@ -8,10 +8,9 @@ RUN set -ex \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && yum install -y supervisor
 
-
-
 #config svn
-RUN yum install -y subversion mod_ssl mod_dav_svn \
+RUN rpm --rebuilddb \
+	&& yum install -y subversion mod_ssl mod_dav_svn \
 	&& mkdir -p /usr/local/svn
 COPY supervisord.conf /etc/
 COPY svn.conf /etc/httpd/conf.d/
