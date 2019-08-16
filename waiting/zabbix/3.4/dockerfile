@@ -1,0 +1,23 @@
+FROM changel.cn/alpine:3.7
+
+MAINTAINER changel <changel@changel.cn>
+
+# install timezone
+RUN set -ex \
+  && apk add --no-cache tzdata \
+  && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN set -ex \
+    && apk add --no-cache zabbix-mysql
+
+RUN apk add --no-cache curl \
+	&& curl -sSL https://www.changel.cn/repo/sendemail/sendEmail-v1.56.tar.gz -o sendEmail-v1.56.tar.gz \
+    && tar zxvf sendEmail-v1.56.tar.gz \
+    && mv sendEmail-v1.56/sendEmail /usr/bin/ \
+    && chmod 755 /usr/bin/sendEmail \
+    && rm -rf sendEmail* \
+    && apk del curl
+
+EXPOSE 10051    
+
+CMD su -p -s /bin/sh zabbix -c "/usr/sbin/zabbix_server -f"

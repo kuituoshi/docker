@@ -1,0 +1,25 @@
+version: "2.2"
+services:
+ zookeeper:
+  image: changel.cn/zookeeper:3.4.13
+  restart: always
+  container_name: zookeeper
+
+ kafka-1:
+  image: changel.cn/kafka:2.12
+  restart: always
+  container_name: kafka-1
+  hostname: kafka-1
+
+  environment:
+    - "SET_KAFKA_BROKER_ID=1"
+ 
+ kafka-2:
+  image: changel.cn/kafka:2.12
+  restart: always
+  container_name: kafka-2
+  hostname: kafka-2
+
+  environment:
+    - "SET_KAFKA_BROKER_ID=2"
+ 

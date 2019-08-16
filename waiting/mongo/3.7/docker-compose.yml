@@ -1,0 +1,15 @@
+version: "2.2"
+
+services:
+ mongo:
+  image: changel.cn/mongo:3.7
+  restart: always
+  container_name: mongo
+
+  ports:
+   - 27017:27017
+  environment:
+   - "MONGO_INITDB_ROOT_USERNAME=admin"
+   - "MONGO_INITDB_ROOT_PASSWORD=88888888"
+  volumes:
+   - /data/db:/data/db

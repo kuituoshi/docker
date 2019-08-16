@@ -1,0 +1,20 @@
+FROM centos:6.7
+
+#base setup
+RUN set -ex \
+    && curl -sSL http://mirrors.aliyun.com/repo/epel-6.repo -o /etc/yum.repos.d/epel.repo \
+    && curl -sSL http://mirrors.aliyun.com/repo/Centos-6.repo -o /etc/yum.repos.d/CentOS-Base.repo \
+    && sed -i 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime 
+
+
+
+#config zabbix repo
+RUN set -ex \
+    && curl -sSL https://www.changel.cn/repo/zabbix.repo -o /etc/yum.repos.d/zabbix.repo \
+    && yum install -y zabbix-agent \
+    && yum clean
+
+EXPOSE 10051
+USER zabbix
+CMD ["zabbix_agentd","-c","/etc/zabbix/zabbix_agentd.conf"]

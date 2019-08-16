@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+ nfs:
+  image: nfs:v1
+  restart: always
+  privileged: true
+  container_name: nfs
+
+  ports:
+   - "111/udp:111/udp"
+   - "2049:2049"
+  volumes:
+   - /data/nfs:/exports

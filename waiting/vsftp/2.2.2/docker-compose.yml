@@ -1,0 +1,10 @@
+vsftp:
+  image: changel.cn/vsftp:2.2.2
+  restart: always
+  container_name: vsftp
+
+  ports:
+   - "20-21:20-21"
+   - "50000:50000"
+  volumes:
+   - /data/vsftp:/data

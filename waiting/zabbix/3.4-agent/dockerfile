@@ -1,0 +1,15 @@
+FROM changel.cn/alpine:3.7
+
+MAINTAINER changel <changel@changel.cn>
+
+# install timezone
+RUN set -ex \
+  && apk add --no-cache tzdata \
+  && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN set -ex \
+    && apk add --no-cache zabbix-agent
+
+EXPOSE 10050
+
+CMD su -p -s /bin/sh zabbix -c "/usr/sbin/zabbix_agentd -f"

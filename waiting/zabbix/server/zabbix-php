@@ -1,0 +1,33 @@
+FROM centos:6.7
+
+#base setup
+RUN set -ex \
+    && curl -sSL http://mirrors.aliyun.com/repo/epel-6.repo -o /etc/yum.repos.d/epel.repo \
+    && curl -sSL http://mirrors.aliyun.com/repo/Centos-6.repo -o /etc/yum.repos.d/CentOS-Base.repo \
+    && sed -i 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+
+#config PHP
+RUN rpm -Uvh http://mirrors.aliyun.com/epel/6/x86_64/epel-release-6-8.noarch.rpm \
+    && rpm -Uvh https://mirrors.tuna.tsinghua.edu.cn/remi/enterprise/remi-release-6.rpm \
+    && yum install --enablerepo=remi-php55 -y libxml2 libxml2-devel php php-fpm php-mysql php-gd php-devel gd gd-devel php-xml php-bcmath php-mbstring php-odbc \
+    && yum clean all
+
+RUN sed -i 's/127.0.0.1:9000/0.0.0.0:9000/' /etc/php-fpm.d/www.conf \
+    && sed -i 's/^listen.allowed_clients/;listen.allowed_clients/' /etc/php-fpm.d/www.conf
+
+ENV ZABBIX_VERSION 3.0.11
+RUN curl -sSL https://www.changel.cn/repo/zabbix/zabbix-${ZABBIX_VERSION}.tar.gz -o zabbix-${ZABBIX_VERSION}.tar.gz \
+	&& tar zxvf zabbix-3.0.${ZABBIX_VERSION}.tar.gz \
+	&& mkdir -p /data/www \
+	&& cp -r zabbix-${ZABBIX_VERSION}/frontends/php/* /data/www/ \
+	&& rm -rf zabbix-${ZABBIX_VERSION} \
+	&& rm -rf zabbix-${ZABBIX_VERSION}.tar.gz
+
+COPY zabbix.conf.php /data/www/conf/
+COPY php.ini /etc/
+
+#expose and command
+EXPOSE 9000
+CMD ["/usr/sbin/php-fpm","--nodaemonize"]

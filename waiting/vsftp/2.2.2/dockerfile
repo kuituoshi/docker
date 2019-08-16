@@ -1,0 +1,31 @@
+FROM changel.cn/centos:6.7
+
+#base setup
+RUN set -ex \
+    && curl -sSL http://mirrors.aliyun.com/repo/epel-6.repo -o /etc/yum.repos.d/epel.repo \
+    && curl -sSL http://mirrors.aliyun.com/repo/Centos-6.repo -o /etc/yum.repos.d/CentOS-Base.repo \
+    && sed -i 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && yum install -y vsftpd db4 \
+    && yum clean all
+
+#install vsftpd
+ENV LANG en_US.UTF-8
+RUN set -ex \
+	&& useradd -r -u 200 -m -s /sbin/nologin vuser \
+	&& mkdir -p /data/ftp /etc/vsftpd/user_conf \
+	&& chown -R vuser:vuser /data \
+	&& echo 'local_root=/data' >/etc/vsftpd/user_conf/admin \
+	&& echo 'admin'>/etc/vsftpd/ftp_user \
+	&& echo '123456'>>/etc/vsftpd/ftp_user \
+	&& echo 'auth       required    pam_userdb.so     db=/etc/vsftpd/ftp_user'>/etc/pam.d/vsftpd \
+	&& echo 'account    required    pam_userdb.so   db=/etc/vsftpd/ftp_user'>>/etc/pam.d/vsftpd \
+	&& db_load -T -t hash -f /etc/vsftpd/ftp_user /etc/vsftpd/ftp_user.db
+
+#add file
+COPY vsftpd.conf /etc/vsftpd/
+COPY entrypoint.sh /
+
+#expose and command
+EXPOSE 20 21
+CMD ["/entrypoint.sh"]

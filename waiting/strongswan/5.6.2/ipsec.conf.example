@@ -1,0 +1,39 @@
+config setup
+    uniqueids=never
+
+conn %default
+    esp = aes256-sha256,aes256-sha1,3des-sha1!
+    ike = aes256-sha256-modp2048,aes256-sha1-modp2048,aes128-sha1-modp2048,3des-sha1-modp2048,aes256-sha256-modp1024,aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024!
+
+conn base
+    auto=add
+    keyexchange=ikev2
+    dpdaction=clear
+    dpddelay=300s
+    left=%defaultroute
+    leftsubnet=0.0.0.0/0
+    rightsourceip=10.8.0.0/16
+    rekey=no
+    right=%any
+
+conn windows7
+    also=base
+    leftauth=pubkey
+    leftca="C=CH, O=VULTR-VPS-CENTOS, CN=vpn-win7.changel.cn"
+    leftid=@vpn-win7.changel.cn
+    leftcert=vpn.changel.cn.self.crt
+    leftsendcert=always
+    rightauth=eap-mschapv2
+    rightsendcert=never
+    eap_identity=%any
+
+conn ios_ikev2
+    also=base
+    leftauth=pubkey
+    leftca="C=GB, ST=Greater Manchester, L=Salford, O=COMODO CA Limited, CN=COMODO RSA Certification Authority"
+    leftcert=vpn.changel.cn.crt
+    leftid=@vpn.changel.cn
+    leftsendcert=always
+    rightauth=eap-mschapv2
+    rightsendcert=never
+    eap_identity=%any

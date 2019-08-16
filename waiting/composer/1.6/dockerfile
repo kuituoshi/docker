@@ -1,0 +1,9 @@
+FROM composer:1.6
+
+#base setup
+RUN set -ex \
+    && apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+RUN set -ex \
+	&& composer config -g repo.packagist composer https://packagist.phpcomposer.com

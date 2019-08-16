@@ -1,0 +1,32 @@
+FROM ubuntu:18.04
+
+#base setup
+RUN set -ex \
+    && apt update \
+    && apt install -y ca-certificates openssl wget tzdata \
+    && wget https://www.changel.cn/repo/ubuntu-18.04-sources.list -O /etc/apt/sources.list \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && apt purge -y ca-certificates openssl wget \
+    && apt autoremove -y \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN set -ex \
+	&& apt update \
+	&& apt install -y php-fpm php-gd php-curl php-mysql php-bcmath php-xml php-gettext php-json php-ldap mysql-server mysql-client nginx \
+	&& ln -sf /usr/sbin/php-fpm7.2 /usr/sbin/php-fpm \
+	&& mkdir /data /run/php \
+	&& groupadd nginx \
+	&& useradd nginx -g nginx -s /sbin/nologin -M \
+	&& usermod -a -G www-data nginx \
+	&& apt clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY my.cnf /etc/mysql/
+COPY index.php /data/
+COPY nginx.conf /etc/nginx/
+COPY docker-entrypoint.sh /usr/local/bin/
+
+EXPOSE 3306 80 443 
+
+CMD ["docker-entrypoint.sh"]

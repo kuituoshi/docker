@@ -1,0 +1,9 @@
+FROM mysql:5.5
+
+#base setup
+RUN set -ex \
+	&& ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+#config
+COPY my.cnf /etc/mysql/my.cnf
+ENV MYSQL_ROOT_PASSWORD 88888888

@@ -1,0 +1,118 @@
+FROM centos:6.7
+RUN set -ex \
+    && curl -sSL http://mirrors.aliyun.com/repo/epel-6.repo -o /etc/yum.repos.d/epel.repo \
+    && curl -sSL http://mirrors.aliyun.com/repo/Centos-6.repo -o /etc/yum.repos.d/CentOS-Base.repo \
+    && sed -i 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+	&& yum install -y binutils.x86_64 compat-db.x86_64 gcc.x86_64  gcc-c++.x86_64 glibc.x86_64 glibc-common.x86_64 \
+					libstdc++.x86_64 libstdc++.i686 libstdc++-devel.x86_64 ksh.x86_64 sysstat.x86_64 libaio-devel.x86_64 \
+					libaio.x86_64 libaio-devel.i686    libaio.i686    glibc.i686   glibc-devel.i686   compat-glibc.x86_64 \
+					libaio.i686 compat-libstdc++.i686 elfutils-libelf-devel.i686 glibc-devel.i686  libaio-devel.i686 libgcc.i686 \
+					libstdc++.i686 libaio compat-libstdc++ elfutils-libelf-devel glibc-devel  libaio-devel libgcc libstdc++ unixODBC \
+					unixODBC-develunixODBC.i686 unixODBC-devel.i686 supervisor openssh-server \
+	&& yum clean all
+
+ENV OPTIONS -D
+ENV ORACLE_MEM 1024
+ENV	ORACLE_HOME /database/oracle/11.2.0/db_1
+ENV TNS_ADMIN $ORACLE_HOME/network/admin
+
+RUN set -ex \
+	&& groupadd oinstall \
+	&& groupadd dba \
+	&& groupadd oper \
+	&& useradd -g oinstall -G dba oracle \
+	&& mkdir -p /database/data /database/recovery \
+	&& chown -R oracle:oinstall /database \
+	&& echo "--------------------------------------------------------------------------------------" \
+	&& echo "export ORACLE_HOME=/database/oracle/11.2.0/db_1">>/etc/profile \
+	&& echo "export ORACLE_BASE=/database/oracle">>/etc/profile \
+	&& echo "export PATH=$PATH:$ORACLE_HOME/bin">>/etc/profile \
+	&& echo "export ORACLE_SID=ORCL">>/etc/profile \
+	&& echo "export TNS_ADMIN=$ORACLE_HOME/network/admin">>/etc/profile \
+	&& echo "--------------------------------------------------------------------------------------" \
+	&& echo "inventory_loc=/database/oraInventory" >/etc/oraInst.loc \
+	&& echo "inst_group=oinstall" >>/etc/oraInst.loc \
+	&& chown oracle:oinstall /etc/oraInst.loc \
+	&& chmod 664 /etc/oraInst.loc \
+	&& echo "--------------------------------------------------------------------------------------" \
+	&& echo "oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v11_2_0" >/tmp/software.rsp \
+	&& echo "oracle.install.option=INSTALL_DB_SWONLY" >>/tmp/software.rsp \
+	&& echo "SELECTED_LANGUAGES=zh_CN,en" >>/tmp/software.rsp \
+	&& echo "ORACLE_HOME=/database/oracle/11.2.0/db_1" >>/tmp/software.rsp \
+	&& echo "ORACLE_BASE=/database/oracle" >>/tmp/software.rsp \
+	&& echo "DECLINE_SECURITY_UPDATES=true" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.DBA_GROUP=dba" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.OPER_GROUP=oinstall" >>/tmp/software.rsp \
+	&& echo "INVENTORY_LOCATION=/database/oraInventory" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.InstallEdition=EE" >>/tmp/software.rsp \
+	&& echo "SECURITY_UPDATES_VIA_MYORACLESUPPORT=false" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.config.starterdb.automatedBackup.enable=false" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.config.starterdb.control=DB_CONTROL" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.config.starterdb.memoryOption=false" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.config.starterdb.installExampleSchemas=false" >>/tmp/software.rsp \
+	&& echo "oracle.install.db.config.starterdb.type=GENERAL_PURPOSE" >>/tmp/software.rsp \
+	&& echo "--------------------------------------------------------------------------------------" \
+	&& echo "[GENERAL]" >/tmp/instance.rsp \
+	&& echo "RESPONSEFILE_VERSION = 11.2.0" >>/tmp/instance.rsp \
+	&& echo "OPERATION_TYPE = createDatabase" >>/tmp/instance.rsp \
+	&& echo "" >>/tmp/instance.rsp \
+	&& echo "[CREATEDATABASE]" >>/tmp/instance.rsp \
+	&& echo "GDBNAME = ORCL" >>/tmp/instance.rsp \
+	&& echo "SID = ORCL" >>/tmp/instance.rsp \
+	&& echo "TEMPLATENAME = General_Purpose.dbc" >>/tmp/instance.rsp \
+	&& echo "SYSPASSWORD = 111111" >>/tmp/instance.rsp \
+	&& echo "SYSTEMPASSWORD = 111111" >>/tmp/instance.rsp \
+	&& echo "DATAFILEDESTINATION =/database/data" >>/tmp/instance.rsp \
+	&& echo "RECOVERYAREADESTINATION=/database/recovery" >>/tmp/instance.rsp \
+	&& echo "STORAGETYPE=FS" >>/tmp/instance.rsp \
+	&& echo "CHARACTERSET = ZHS16GBK" >>/tmp/instance.rsp \
+	&& echo "NATIONALCHARACTERSET= AL16UTF16" >>/tmp/instance.rsp \
+	&& echo "LISTENERS = listener1" >>/tmp/instance.rsp \
+	&& echo "TOTALMEMORY = $ORACLE_MEM" >>/tmp/instance.rsp \
+	&& echo "DATABASETYPE = MULTIPURPOSE" >>/tmp/instance.rsp \
+	&& echo "AUTOMATICMEMORYMANAGEMENT = TRUE" >>/tmp/instance.rsp
+
+ 
+
+COPY database /tmp/database
+
+RUN su - oracle -lc "/tmp/database/runInstaller -silent  -responseFile /tmp/software.rsp -ignorePrereq"  \
+	&& sleep 5m \
+	&& $ORACLE_HOME/root.sh \
+	&& su - oracle -lc "$ORACLE_HOME/bin/dbca -silent -responseFile /tmp/instance.rsp"
+
+
+RUN echo "SID_LIST_LISTENER = ">$TNS_ADMIN/listener.ora \
+	&& echo "   (SID_LIST =  ">>$TNS_ADMIN/listener.ora \
+	&& echo "     (SID_DESC =">>$TNS_ADMIN/listener.ora \
+	&& echo "       (SID_NAME = ORCL)  ">>$TNS_ADMIN/listener.ora \
+	&& echo "       (ORACLE_HOME = /database/oracle/11.2.0/db_1)">>$TNS_ADMIN/listener.ora \
+	&& echo "     )  ">>$TNS_ADMIN/listener.ora \
+	&& echo "   )">>$TNS_ADMIN/listener.ora \
+	&& echo "">>$TNS_ADMIN/listener.ora \
+	&& echo "LISTENER =  ">>$TNS_ADMIN/listener.ora \
+	&& echo "   (DESCRIPTION_LIST =  ">>$TNS_ADMIN/listener.ora \
+	&& echo "     (DESCRIPTION = ">>$TNS_ADMIN/listener.ora \
+	&& echo "       (ADDRESS = (PROTOCOL = TCP)(HOST = 0.0.0.0)(PORT = 1521)) ">>$TNS_ADMIN/listener.ora \
+	&& echo "     )  ">>$TNS_ADMIN/listener.ora \
+	&& echo "   )">>$TNS_ADMIN/listener.ora \
+	&& echo "--------------------------------------------------------------------------------------" \
+	&& echo "ORCL =" >$TNS_ADMIN/tnsnames.ora \
+	&& echo "   (DESCRIPTION =" >>$TNS_ADMIN/tnsnames.ora \
+	&& echo "     (ADDRESS = (PROTOCOL = TCP)(HOST = 0.0.0.0)(PORT = 1521))" >>$TNS_ADMIN/tnsnames.ora \
+	&& echo "     (CONNECT_DATA =" >>$TNS_ADMIN/tnsnames.ora \
+	&& echo "       (SERVER = DEDICATED)" >>$TNS_ADMIN/tnsnames.ora \
+	&& echo "       (SERVICE_NAME = ORCL)" >>$TNS_ADMIN/tnsnames.ora \
+	&& echo "     )" >>$TNS_ADMIN/tnsnames.ora \
+	&& echo "  )" >>$TNS_ADMIN/tnsnames.ora \
+	&& rm -rf /tmp/* \
+	&& sed -i 's/:N/:Y/g' /etc/oratab \
+	&& sed -i 's/=$1/=$ORACLE_HOME/g' $ORACLE_HOME/bin/dbstart 
+
+
+
+
+EXPOSE 1521 22
+
+CMD ["/etc/init.d/sshd","start"]

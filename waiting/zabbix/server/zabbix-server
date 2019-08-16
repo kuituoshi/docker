@@ -1,0 +1,43 @@
+FROM centos:6.7
+
+#base setup
+RUN set -ex \
+    && curl -sSL http://mirrors.aliyun.com/repo/epel-6.repo -o /etc/yum.repos.d/epel.repo \
+    && curl -sSL http://mirrors.aliyun.com/repo/Centos-6.repo -o /etc/yum.repos.d/CentOS-Base.repo \
+    && sed -i 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && yum install -y tar \
+    && yum clean
+
+
+
+#config zabbix
+RUN yum install -y libxml2-devel libidn-devel openssl-devel rpm-devel OpenIPMI-devel iksemel-devel \
+	libssh2-devel net-snmp-devel automake glibc-devel mysql-devel gcc-c++ gcc cmake  make zlib-devel \
+	curl-devel mysql-connector-odbc unixODBC unixODBC-devel
+
+
+ENV PATH $PATH:/usr/local/zabbix/sbin
+ENV ZABBIX_VERSION 3.0.11
+RUN useradd -M -s /sbin/nologin zabbix \
+	 && curl -sSL https://www.changel.cn/repo/zabbix/zabbix-${ZABBIX_VERSION}.tar.gz -o zabbix-${ZABBIX_VERSION}.tar.gz \
+	 && tar zxvf zabbix-${ZABBIX_VERSION}.tar.gz \
+	 && cd zabbix-${ZABBIX_VERSION} \
+	 && ./configure --prefix=/usr/local/zabbix \
+    --enable-server --with-mysql \
+    --with-libcurl --with-net-snmp \
+    --with-openipmi --with-ssh2 \
+    --enable-agent --with-openssl --with-unixodbc \
+   && make \
+   && make install \
+   && rm -rf zabbix-${ZABBIX_VERSION}.tar.gz \
+   && rm -rf zabbix-${ZABBIX_VERSION}
+
+RUN curl -sSL http://caspian.dotconf.net/menu/Software/SendEmail/sendEmail-v1.56.tar.gz -o sendEmail-v1.56.tar.gz \
+   	&& tar zxvf sendEmail-v1.56.tar.gz \
+   	&& mv sendEmail-v1.56/sendEmail /usr/bin/ \
+   	&& rm -rf sendEmail*
+
+EXPOSE 10051   	
+USER zabbix
+CMD ["zabbix_server","-f"]

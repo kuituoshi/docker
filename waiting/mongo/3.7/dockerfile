@@ -1,0 +1,11 @@
+FROM mongo:3.7
+
+MAINTAINER changel <changel@changel.cn>
+
+# install timezone
+
+RUN set -ex \
+  && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ENV MONGO_INITDB_ROOT_USERNAME=admin \
+    MONGO_INITDB_ROOT_PASSWORD=88888888
