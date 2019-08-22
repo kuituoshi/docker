@@ -4,8 +4,10 @@ MAINTAINER changel <changel@changel.cn>
 
 RUN set -ex \
     && apt update \
-    && apt install -y uwsgi uwsgi-plugin-python3 \
+    && apt install -y gcc \
+    && pip install --no-cache-dir uwsgi \
     && mkdir -p /var/www/html \
+    && apt-get remove --purge --auto-remove -y gcc \
     && rm -rf /var/lib/apt/lists /var/tmp/* /tmp/*
 
 # set default configuration
