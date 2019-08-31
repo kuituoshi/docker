@@ -1,0 +1,40 @@
+#!/bin/bash
+if [ $1 ];      then
+        CN=$1
+        echo "generating keys for $CN ..."
+else
+        echo "usage:\n sh server_key.sh YOUR EXACT HOST NAME or SERVER IP\n Run this script in directory to store your keys"
+        exit 1
+fi
+
+mkdir -p ipsec.d/private && mkdir -p ipsec.d/cacerts && mkdir -p ipsec.d/certs
+
+ipsec pki --gen --type rsa --size 4096 --outform pem > ipsec.d/private/strongswanKey.pem
+ipsec pki --self --ca --lifetime 3650 --in ipsec.d/private/strongswanKey.pem --type rsa --dn "C=CH, O=VULTR-VPS-CENTOS, CN=$CN" --outform pem > ipsec.d/cacerts/strongswanCert.pem
+echo 'CA certs at ipsec.d/cacerts/strongswanCert.pem\n'
+ipsec pki --print --in ipsec.d/cacerts/strongswanCert.pem
+
+sleep 1
+echo "\ngenerating server keys ..."
+ipsec pki --gen --type rsa --size 1024 --outform pem > ipsec.d/private/$CN.pem
+ipsec pki --pub --in ipsec.d/private/$CN.pem --type rsa | \
+        ipsec pki --issue --lifetime 730 \
+        --cacert ipsec.d/cacerts/strongswanCert.pem \
+        --cakey ipsec.d/private/strongswanKey.pem \
+        --dn "C=CH, O=VULTR-VPS-CENTOS, CN=$CN" \
+        --san $CN \
+        --flag serverAuth --flag ikeIntermediate \
+        --outform pem > ipsec.d/certs/$CN.pem
+echo "vpn server cert at ipsec.d/certs/$CN.pem\n"
+ipsec pki --print --in ipsec.d/certs/$CN.pem
+
+#make certs that using in ios system, and must be replace with certs which published by public certification authority
+cp ipsec.d/private/$CN.pem ipsec.d/private/$CN.key
+cp ipsec.d/certs/$CN.pem ipsec.d/certs/$CN.crt
+
+cp /etc/ipsec.conf.example ipsec.conf
+cp /etc/ipsec.secrets.example ipsec.secrets
+cp /etc/strongswan.conf.example strongswan.conf
+
+sed -i "s/common_domain/${CN}/g" ipsec.conf
+sed -i "s/common_domain/${CN}/g" ipsec.secrets
