@@ -1,5 +1,6 @@
 charon {
     load_modular = yes
+    i_dont_care_about_security_and_use_aggressive_mode_psk = yes
     plugins {
         include strongswan.d/charon/*.conf
         attr {

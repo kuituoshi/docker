@@ -23,6 +23,7 @@ ipsec pki --pub --in ipsec.d/private/$CN.pem --type rsa | \
         --cakey ipsec.d/private/strongswanKey.pem \
         --dn "C=CH, O=VULTR-VPS-CENTOS, CN=$CN" \
         --san $CN \
+        --san "windows" \
         --flag serverAuth --flag ikeIntermediate \
         --outform pem > ipsec.d/certs/$CN.pem
 echo "vpn server cert at ipsec.d/certs/$CN.pem\n"

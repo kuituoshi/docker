@@ -21,6 +21,8 @@ conn android_xauth_psk
     also=base
     keyexchange=ikev1
     leftid=@android
+    aggressive=yes
+    ike=3des-md5-modp1024
     leftauth=psk
     rightauth=psk
     rightauth2=xauth
