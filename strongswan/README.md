@@ -9,6 +9,7 @@
 * if you want to use it in IOS system, you must purchase Authorified certs and replace `*.crt *.key` in private and certs directory
 * default username and password is `admin: 123456`, change ipsec.secrets if you want
 * Add all this data to your container path `/etc`
+* **IMPORTANT!** in `conn ios_ikev2`->`/etc/ipsec.conf`->`leftid` Make sure this value equal to one of CN in your certification, Example if your certification CN contains `*.example.com example.com www.example.com`, you have to choose in one of them, And uncomment `leftca` which is issuer CN
 
 
 ## How to use it
@@ -26,4 +27,3 @@
 *ios*
 
 * remote identifier is the same with server domain name
-
