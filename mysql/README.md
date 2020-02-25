@@ -45,6 +45,7 @@
 	* `time` add time suffix to database name in destination server
 	* `same` same name to restore in destination server
 	* `define` define the database name in destination server
+	* `prefix` prefix the database name in destination server and append time
 
 * Setup environments in your docker container to run backup Runner
 	* `BACKUP_SOURCE_URL`  needed
@@ -59,5 +60,6 @@
 	* `BACKUP_DATABASE`    needed
 	* `BACKUP_MODE`        default is `time`
 	* `BACKUP_DEFINE_NAME` needed if `BACKUP_MODE=define`
+	* `BACKUP_PREFIX_NAME` needed if `BACKUP_MODE=prefix`
 
 * Run extra sql file in destination DATABASE, Just put .sql or .sql.gz into `/docker-entrypoint-initdb.d` directory

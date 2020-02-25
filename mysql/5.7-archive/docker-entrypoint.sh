@@ -16,6 +16,9 @@ set -e
 if [ ${BACKUP_MODE} == 'define' ];then
 	: ${BACKUP_DEFINE_NAME:?BACKUP_DEFINE_NAME is REQUIRED in define mode}
 fi
+if [ ${BACKUP_MODE} == 'prefix' ];then
+	: ${BACKUP_PREFIX_NAME:?BACKUP_PREFIX_NAME is REQUIRED in prefix mode}
+fi
 
 src_mysql=(mysql -u${BACKUP_SOURCE_USER} -p${BACKUP_SOURCE_PASS} --port=${BACKUP_SOURCE_PORT} --host=${BACKUP_SOURCE_URL})
 dst_mysql=(mysql -u${BACKUP_DEST_USER} -p${BACKUP_DEST_PASS} --port=${BACKUP_DEST_PORT} --host=${BACKUP_DEST_URL})
@@ -59,8 +62,10 @@ elif [ ${BACKUP_MODE} == 'define' ];then
 	database_dest_name=${BACKUP_DEFINE_NAME}
 elif [ ${BACKUP_MODE} == 'same' ];then
 	database_dest_name=${BACKUP_DATABASE}
+elif [ ${BACKUP_MODE} == 'prefix' ];then
+	database_dest_name=${BACKUP_PREFIX_NAME}-${BACKUP_DATABASE}-$(date "+%Y%m%d")
 else
-	echo "BACKUP_MODE must be set one of [same, define, time]"
+	echo "BACKUP_MODE must be set one of [same, define, time, prefix]"
 	exit 1
 fi
 
