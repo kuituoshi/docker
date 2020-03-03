@@ -7,6 +7,8 @@
 
 ## What is changed
 
+*1.15*
+
 * Copy from official image
 * Set accelerating repository to `aliyun` and set timezone to `Asia/Shanghai`
 
