@@ -10,4 +10,5 @@
 ## What is changed
 
 * All copy from prom official images
+* Modify prometheus default TimeZone to 'Asia/Shanghai'
 * all version download from '2020-03-07', used as Prometheus stable version: 2.16.0
