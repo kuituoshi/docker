@@ -82,7 +82,7 @@ ${dst_mysql[@]} -e "${create_schema_sql}"
 dst_mysql=(${dst_mysql[@]} ${database_dest_name})
 # replace mysql command with mysqldump
 src_mysql[0]=mysqldump
-mysqldump=(${src_mysql[@]} --default-character-set=utf8 --routines --events --single-transaction --triggers ${BACKUP_DATABASE})
+mysqldump=(${src_mysql[@]} --default-character-set=utf8 --max-allowed-packet=1G --routines --events --single-transaction --triggers ${BACKUP_DATABASE})
 
 ${mysqldump[@]} | ${dst_mysql[@]}
 if [ $? -eq 1 ];then
