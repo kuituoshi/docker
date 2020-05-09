@@ -15,7 +15,6 @@ ENV PYTHONPATH=/usr/local/lib/python3.7/site-packages:/usr/lib/python3.7/site-pa
 ENV UWSGI_HTTP_SOCKET=":9090" \
 	UWSGI_UID=www-data \
 	UWSGI_GID=www-data \
-	UWSGI_PLUGIN=python3 \
 	UWSGI_PROCESSES=2 \
 	UWSGI_THREADS=3 \
 	UWSGI_MASTER=1 \

@@ -10,6 +10,7 @@ set -e
 : ${BACKUP_DEST_PORT:=3306}
 : ${BACKUP_DEST_USER:=root}
 : ${BACKUP_DEST_PASS:?BACKUP_DEST_PASS is REQUIRED!}
+: ${BACKUP_DATABASE_FORCE:=False}
 
 : ${BACKUP_DATABASE:?BACKUP_DATABASE is REQUIRED!}
 : ${BACKUP_MODE:=time}
@@ -73,7 +74,11 @@ create_schema_sql="CREATE SCHEMA \`${database_dest_name}\` DEFAULT CHARACTER SET
 
 
 echo "Database Backup 2: Creating database [${database_dest_name}] in destination Server"
-[ $(find_dst_database ${database_dest_name}) -eq 0 ] && { echo "${database_dest_name} already exists in destination, process aborted." ; exit 1; }
+if [ $(find_dst_database ${database_dest_name}) -eq 0 -a ${BACKUP_DATABASE_FORCE} != "True" ];then
+	echo "${database_dest_name} already exists in destination, process aborted."
+	exit 1
+fi
+
 
 # create database in destination server
 ${dst_mysql[@]} -e "${create_schema_sql}"

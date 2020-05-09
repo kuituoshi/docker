@@ -47,6 +47,8 @@
 	* `define` define the database name in destination server
 	* `prefix` prefix the database name in destination server and append time
 
+* If `BACKUP_DATABASE_FORCE=True`, will cover database in destination even database exists!
+
 * Setup environments in your docker container to run backup Runner
 	* `BACKUP_SOURCE_URL`  needed
 	* `BACKUP_SOURCE_PORT` default is `3306`
@@ -58,6 +60,7 @@
 	* `BACKUP_DEST_PASS`   needed
 
 	* `BACKUP_DATABASE`    needed
+	* `BACKUP_DATABASE_FORCE`    default is `False`
 	* `BACKUP_MODE`        default is `time`
 	* `BACKUP_DEFINE_NAME` needed if `BACKUP_MODE=define`
 	* `BACKUP_PREFIX_NAME` needed if `BACKUP_MODE=prefix`
