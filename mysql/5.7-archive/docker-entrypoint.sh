@@ -50,10 +50,6 @@ function find_dst_database(){
 
 [ $(find_src_database ${BACKUP_DATABASE}) -eq 1 ] && { echo "${BACKUP_DATABASE} not found, process aborted." ; exit 1; }
 
-if [ ${BACKUP_MODE} == 'same' ];then
-	[ $(find_dst_database ${BACKUP_DATABASE}) -eq 0 ] && { echo "${BACKUP_DATABASE} already exists in destination, process aborted." ; exit 1; }
-fi
-
 
 echo "Database Backup 1: Starting backup database [${BACKUP_DATABASE}]"
 
@@ -70,7 +66,7 @@ else
 	exit 1
 fi
 
-create_schema_sql="CREATE SCHEMA \`${database_dest_name}\` DEFAULT CHARACTER SET utf8 ;"
+create_schema_sql="CREATE SCHEMA IF NOT EXISTS \`${database_dest_name}\` DEFAULT CHARACTER SET utf8 ;"
 
 
 echo "Database Backup 2: Creating database [${database_dest_name}] in destination Server"
