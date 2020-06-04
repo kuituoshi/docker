@@ -1,6 +1,7 @@
 # V2RAY
 
 * [`4.23.1`](https://github.com/kuituoshi/docker/blob/master/v2ray/4.23.1/Dockerfile)
+* [`tls-ws`](https://github.com/kuituoshi/docker/blob/master/v2ray/tls-ws/Dockerfile)
 
 
 ## What is changed
@@ -11,60 +12,15 @@
 
 * Export 4443 port by default
 
-```json
-{
-  "log": {
-    "loglevel": "warning"
-  },
-  "dns": {},
-  "stats": {},
-  "inbounds": [
-    {
-      "port": 4443,
-      "protocol": "vmess",
-      "settings": {
-        "clients": [
-          {
-            "id": "29f5a1f4-84fa-4bf1-9c75-d0e75ad08018",
-            "alterId": 32
-          }
-        ]
-      },
-      "tag": "in-0",
-      "streamSettings": {
-        "network": "tcp",
-        "security": "none",
-        "tcpSettings": {}
-      }
-    }
-  ],
-  "outbounds": [
-    {
-      "tag": "direct",
-      "protocol": "freedom",
-      "settings": {}
-    },
-    {
-      "tag": "blocked",
-      "protocol": "blackhole",
-      "settings": {}
-    }
-  ],
-  "routing": {
-    "domainStrategy": "AsIs",
-    "rules": [
-      {
-        "type": "field",
-        "ip": [
-          "geoip:private"
-        ],
-        "outboundTag": "blocked"
-      }
-    ]
-  },
-  "policy": {},
-  "reverse": {},
-  "transport": {}
-}
+* Inbound setting is `ws` network, path: `/websocket`, put nginx at front and ust TLS ,this is best choice
 
-```
+* Default Id is `df4d5522-a1ea-4a1a-a551-ef5cf40330b0`, change it before use
+
+
+## tls-ws
+
+* Out of the box
+
+* `V2RAY_UUID` and `V2RAY_DOMAIN` env is required , if you want to change port, change `V2RAY_PORT`
+
+* Setup Tls name to `p2plive-ali.douyucdn.cn` and Allow insecure TLS

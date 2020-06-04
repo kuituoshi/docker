@@ -1,11 +1,11 @@
 {
   "inbound": {
-    "port": 4443,
+    "port": 65519,
     "protocol": "vmess",
     "settings": {
       "clients": [
         {
-          "id": "df4d5522-a1ea-4a1a-a551-ef5cf40330b0",
+          "id": "V2rayId",
           "alterId": 64
         }
       ]
