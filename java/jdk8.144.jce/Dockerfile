@@ -75,11 +75,10 @@ RUN set -ex \
     && apk -U upgrade \
     && apk add curl \
     && mkdir -p /usr/share/maven /var/lib/maven \
-    && curl -fsSL -o /tmp/apache-maven-3.5.3-bin.tar.gz https://www.changel.cn/repo/maven/apache-maven-3.5.3-bin.tar.gz \
-    && tar -xzf /tmp/apache-maven-3.5.3-bin.tar.gz -C /usr/share/maven --strip-components=1 \
+    && curl -fsSL -o /tmp/apache-maven-3.6.3-bin.tar.gz https://mirror-hk.koddos.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz \
+    && tar -xzf /tmp/apache-maven-3.6.3-bin.tar.gz -C /usr/share/maven --strip-components=1 \
     && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
     && ln -s /var/lib/maven /root/.m2 \
-    && curl -fsSL -o /var/lib/maven/settings.xml https://www.changel.cn/repo/gadget/maven-settings.xml \
     && apk del curl \
     && rm -rf /var/cache/apk/* /tmp/*
 
@@ -88,13 +87,14 @@ RUN set -ex \
     && apk -U upgrade \
     && apk add curl \
     && mkdir -p /usr/share/ant \
-    && curl -fssL https://www.changel.cn/repo/ant/apache-ant-1.10.3-bin.tar.gz -o ant.tar.gz \
+    && curl -fssL https://mirror-hk.koddos.net/apache//ant/binaries/apache-ant-1.10.9-bin.tar.gz -o ant.tar.gz \
     && tar zxf ant.tar.gz -C /usr/share/ant --strip-components=1 \
     && ln -s /usr/share/ant/bin/ant /usr/bin/ant \
     && rm -f ant.tar.gz \
     && apk del curl \
     && rm -rf /var/cache/apk/* /tmp/*
 
+COPY settings.xml /var/lib/maven/
 VOLUME /var/lib/maven/repository
 WORKDIR /work
 

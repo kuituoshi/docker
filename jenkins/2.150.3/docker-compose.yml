@@ -1,9 +1,0 @@
-jenkins:
-  image: changel.cn/jenkins:2.150.3
-  restart: always
-  container_name: jenkins
-
-  ports:
-   - "8080:8080"
-  volumes:
-   - /data/jenkins:/var/lib/jenkins

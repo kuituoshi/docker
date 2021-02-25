@@ -14,6 +14,9 @@
 
 * Notice! make sure you tag your image with format `image:describe.%yy.%mm%dd` --> like `tomcat:manager.19.0219`
 * Set environments before running in docker `IMAGE_NAME,IMAGE_KEEP_INTERVAL,REGISTRY_URL,REGISTRY_USERNAME,REGISTRY_PASSWORD`
-* `IMAGE_NAME` is which image you want to clean, `IMAGE_KEEP_INTERVAL` is to keep interval, expired image will be marked deleted
-* `REGISTRY_URL,REGISTRY_USERNAME,REGISTRY_PASSWORD` are privite registry login info
-* After you have been deleted tags of image if your registry use local storage driver, Run this command in registry container --> `"/bin/registry garbage-collect  /etc/docker/registry/config.yml"`
+* `IMAGE_NAMES` specify images you want to clean, multiple image split with ','
+* `IMAGE_KEEP_INTERVAL` keep interval, expired image will be marked deleted
+* `REGISTRY_URL` are privite registry repository url
+* `REGISTRY_USERNAME,REGISTRY_PASSWORD` repository username and password
+* After tags deleted, your should run command in registry container `"/bin/registry garbage-collect  /etc/docker/registry/config.yml --delete-untagged=true"`
+* `--delete-untagged=true` support in version `2.7`
