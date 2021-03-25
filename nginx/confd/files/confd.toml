@@ -1,9 +1,0 @@
-backend = "etcd"
-confdir = "/etc/confd"
-watch = true
-#interval = 30
-
-#if you setup this file ,you must setup nodes for connection
-#nodes = [
-#  "http://127.0.0.1:2379",
-#]

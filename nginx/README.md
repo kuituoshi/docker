@@ -19,17 +19,7 @@
 
 *confd*
 
-* confd is open by default
-
-* if set `SET_NGINX_FILE` variable which means you want to use your own nginx file
-
-* you must set `SET_CONFD_FILE`(high priority) or `SET_ETCD_NODES` to connect to etcd SERVER
-
-* root keys directory is `/services/nginx/` if you want to set upstream server, put keys in `/services/nginx/stream/upstream/server/*`; set listen value in `/services/nginx/stream/server/listen`, and so on
-
-* etcd auth should set in files
-
-* monitor `/services/nginx/` prefix, if anything changes nginx will reload
+* read confd [`README.md`](https://github.com/kuituoshi/docker/blob/master/nginx/confd/README.md)
 
 
 *proxy*

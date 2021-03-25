@@ -2,10 +2,10 @@
 set -eo pipefail
 
 #initialize manage environments
-: ${SET_NGINX_FILE:-/etc/nginx/nginx.conf}
-: ${SET_CONFD_FILE:-/etc/confd/confd.toml}
-: ${SET_CONFD_ENABLE:=no}
-: ${SET_ETCD_NODES:-127.0.0.1:2379}
+: ${SET_CONFD_NODE:=127.0.0.1:2379/0}
+: ${SET_CONFD_NODE_PASSWORD:=x}
+: ${SET_CONFD_INTERVAL:=30}
+: ${SET_CONFD_PREFIX:=/nginx}
 
 
 if [ "${1:0:1}" = '-' ]; then
@@ -16,33 +16,27 @@ if [ "${SET_NGINX_FILE:+x}" = "x" ];then
 	set -- "$@" -c "${SET_NGINX_FILE}"
 fi
 
-if [ "${SET_CONFD_ENABLE}" = "yes" -a "$1" = "nginx" ];then
-	#must set etcd_nodes env or confd configuration file
-	if [ "${SET_ETCD_NODES:-x}" = "x" -a "${SET_CONFD_FILE:-x}" = "x" ];then
-		echo "Error ! After you enable confd service, you must set env SET_ETCD_NODES or SET_CONFD_FILE"
-		exit 1
-	fi
 
-	if [ "${SET_CONFD_FILE:+x}" = "x" ];then
-		until confd -onetime -config-file ${SET_CONFD_FILE}; do
-			echo "[confd service]: using file SET_CONFD_FILE: ${SET_ETCD_NODES} ..."
-			echo "[confd service]: making configuration file ..."
-			sleep 10
-		done
-		confd -config-file ${SET_CONFD_FILE} &
+if [ "$1" = "nginx" ];then
+	
+	until confd -onetime -backend redis -client-key ${SET_CONFD_NODE_PASSWORD} -node ${SET_CONFD_NODE}; do
+		echo "[confd service]: making configuration file ..."
+		sleep 10
+	done
+	if [ "${SET_CONFD_INTERVAL}" = "0" ];then
+		confd -backend redis -prefix ${SET_CONFD_PREFIX} -client-key ${SET_CONFD_NODE_PASSWORD} -node ${SET_CONFD_NODE} -watch &
 	else
-		until confd -onetime -node ${SET_ETCD_NODES}; do
-			echo "[confd service]: using environment SET_ETCD_NODES: ${SET_ETCD_NODES} ..."
-			echo "[confd service]: making configuration file ..."
-			sleep 10
-		done
-		confd -node ${SET_ETCD_NODES} &
+		confd -backend redis -prefix ${SET_CONFD_PREFIX} -client-key ${SET_CONFD_NODE_PASSWORD} -node ${SET_CONFD_NODE} -interval ${SET_CONFD_INTERVAL} &
 	fi
 	
-	echo "[confd service]: confd is listening for changes on etcd ..."
-	echo "[nginx service]: starting nginx service ..."
+	echo "[nginx service]: Making successfully, Starting nginx service ..."
+	echo "[confd service]: confd prefix -> ${SET_CONFD_PREFIX}"
+	if [ "${SET_CONFD_NODE_PASSWORD}" != "x" ];then
+		echo "[confd service]: confd password -> ${SET_CONFD_NODE_PASSWORD}"
+	fi
+	echo "[confd service]: confd node -> ${SET_CONFD_NODE}"
+	echo "[confd service]: confd is listening for changes on redis ..."
 fi
-
 
 
 exec "$@"

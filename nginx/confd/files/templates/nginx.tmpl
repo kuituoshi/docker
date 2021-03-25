@@ -1,21 +1,56 @@
 user  nginx;
 worker_processes  auto;
-error_log  /var/log/nginx/error.log warn;
+
+error_log  /var/log/nginx/error.log error;
+pid        /var/run/nginx.pid;
+
 
 events {
     use epoll;
-    worker_connections  4096;
+    worker_connections  8096;
 }
 
-stream {
-    upstream upservers { 
-        {{ range gets "/stream/upstream/server/*" }}
-        server {{base .Key}}:{{.Value}} max_fails=2 fail_timeout=10s;{{end}}
-        }
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+    log_not_found    off;
+    sendfile        on;
+
+    merge_slashes off;
+    server_tokens off;
+
+    {{range gets "/globalAttributes/*"}}
+        {{base .Key}} {{.Value}};
+    {{end}}
+
 
     server {
-        proxy_pass upservers;
-        listen {{getv "/stream/server/listen"}};
-        proxy_timeout {{getv "/stream/server/proxy_timeout"}};
+        listen       80;
+        server_name   _;
+        return      404;
     }
+
+    {{range gets "/serverList/*"}}
+    {{$domain := base .Key}}
+    server {
+        {{$serverAttr := printf "/serverAttributes/%s/*" $domain}}
+        {{range gets $serverAttr}}
+            {{base .Key}} {{.Value}};
+        {{end}}
+        {{$locations := printf "/locationList/%s/*" $domain}}
+        {{range gets $locations}}
+        {{$location := base .Key}}
+        location {{replace $location "@" "/" -1}} {
+            {{$locationKeys := printf "/serverLocations/%s/%s/*" $domain $location}}
+            {{range gets $locationKeys}}
+                {{$locationAttr := base .Key}}
+                {{range jsonArray (getv .Key)}}
+                    {{$locationAttr}} {{.}};
+                {{end}}
+            {{end}}
+        }
+        {{end}} 
+    }
+    {{end}}
 }
