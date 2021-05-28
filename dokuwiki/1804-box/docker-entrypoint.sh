@@ -10,7 +10,7 @@ WIKI_URL="https://www.changel.cn/repo/dokuwiki"
 if [ "`ls -A ${PHP_DIR}`" = "" ];then
 		echo "Downloading package..., wait for a moment"
 		cd ${PHP_DIR}
-        curl -sSL -o ${WIKI_VERSION}.tar.gz ${WIKI_URL}/${WIKI_VERSION}.tar.gz
+        curl -sSL -k -o ${WIKI_VERSION}.tar.gz ${WIKI_URL}/${WIKI_VERSION}.tar.gz
         tar zxf ${WIKI_VERSION}.tar.gz -C .
         rm -f ${WIKI_VERSION}.tar.gz
         chown -R root:root *

@@ -23,4 +23,3 @@
 
 * `V2RAY_UUID` and `V2RAY_DOMAIN` env is required , if you want to change port, change `V2RAY_PORT`
 
-* Setup Tls name to `p2plive-ali.douyucdn.cn` and Allow insecure TLS

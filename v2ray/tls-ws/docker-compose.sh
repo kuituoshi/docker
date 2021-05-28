@@ -19,5 +19,4 @@ openssl req -new -x509 -nodes -newkey rsa:2048 -keyout /etc/nginx/certs/server.k
 -subj "/CN=${V2RAY_DOMAIN}" \
 -days 10950 2>/dev/null
 
-v2ray -config=/etc/v2ray/config.json &
-nginx -g 'daemon off;'
+supervisord
