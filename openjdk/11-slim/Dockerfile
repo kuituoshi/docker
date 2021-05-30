@@ -1,7 +1,5 @@
 FROM changel/alpine:3.12
 
-#COPY from https://github.com/AdoptOpenJDK/openjdk-docker/blob/master/8/jdk/alpine/Dockerfile.hotspot.releases.slim
-
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 RUN apk add --no-cache tzdata --virtual .build-deps curl binutils zstd \
@@ -37,7 +35,7 @@ RUN apk add --no-cache tzdata --virtual .build-deps curl binutils zstd \
     && apk del --purge .build-deps glibc-i18n \
     && rm -rf /tmp/*.apk /tmp/gcc /tmp/gcc-libs.tar* /tmp/libz /tmp/libz.tar.xz /var/cache/apk/*
 
-ENV JAVA_VERSION jdk8u292-b10
+ENV JAVA_VERSION jdk-11.0.11+9
 
 COPY slim-java* /usr/local/bin/
 
@@ -46,15 +44,15 @@ RUN set -eux; \
     ARCH="$(apk --print-arch)"; \
     case "${ARCH}" in \
        amd64|x86_64) \
-         ESUM='0949505fcf42a1765558048451bb2a22e84b3635b1a31dd6191780eeccaa4ada'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_linux_hotspot_8u292b10.tar.gz'; \
+         ESUM='e99b98f851541202ab64401594901e583b764e368814320eba442095251e78cb'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz'; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
          exit 1; \
          ;; \
     esac; \
-    curl -Lfo /tmp/openjdk.tar.gz ${BINARY_URL}; \
+    curl -LfsSo /tmp/openjdk.tar.gz ${BINARY_URL}; \
     echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
     mkdir -p /opt/java/openjdk; \
     cd /opt/java/openjdk; \
@@ -70,6 +68,9 @@ RUN set -eux; \
 
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH="/opt/java/openjdk/bin:$PATH"
+CMD ["jshell"]
+
+# Copy from adoptopenjdk/openjdk11:alpine-slim, Resovle Alpine Version problems
 
 RUN set -ex \
     && apk add --no-cache curl \

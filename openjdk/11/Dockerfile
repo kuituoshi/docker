@@ -1,5 +1,6 @@
 FROM changel/alpine:3.12
 
+
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 RUN apk add --no-cache tzdata --virtual .build-deps curl binutils zstd \
@@ -35,15 +36,15 @@ RUN apk add --no-cache tzdata --virtual .build-deps curl binutils zstd \
     && apk del --purge .build-deps glibc-i18n \
     && rm -rf /tmp/*.apk /tmp/gcc /tmp/gcc-libs.tar* /tmp/libz /tmp/libz.tar.xz /var/cache/apk/*
 
-ENV JAVA_VERSION jdk8u292-b10
+ENV JAVA_VERSION jdk-11.0.11+9
 
 RUN set -eux; \
     apk add --no-cache --virtual .fetch-deps curl; \
     ARCH="$(apk --print-arch)"; \
     case "${ARCH}" in \
        amd64|x86_64) \
-         ESUM='cad66f48f90167ed19030c71f8f0580702c43cce5ce5a0d76833f7a5ae7c402a'; \
-         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x64_linux_hotspot_8u292b10.tar.gz'; \
+         ESUM='e99b98f851541202ab64401594901e583b764e368814320eba442095251e78cb'; \
+         BINARY_URL='https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.11_9.tar.gz'; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
@@ -61,5 +62,20 @@ RUN set -eux; \
 
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH="/opt/java/openjdk/bin:$PATH"
+CMD ["jshell"]
 
-RUN apk add --no-cache ca-certificates
+# Copy from adoptopenjdk/openjdk11:alpine, Resovle Alpine Version problems
+
+RUN set -ex \
+    && apk add --no-cache curl \
+    && mkdir -p /usr/share/maven /var/lib/maven \
+    && curl -fsSL -o /tmp/apache-maven-3.6.3-bin.tar.gz https://mirror-hk.koddos.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz \
+    && tar -xzf /tmp/apache-maven-3.6.3-bin.tar.gz -C /usr/share/maven --strip-components=1 \
+    && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
+    && ln -s /var/lib/maven /root/.m2 \
+    && apk del curl \
+    && rm -rf /var/cache/apk/* /tmp/*
+
+COPY settings.xml /var/lib/maven/
+
+CMD ["mvn"]

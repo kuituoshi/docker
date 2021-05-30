@@ -1,6 +1,7 @@
 # SPRINGBOOT
 
 * [`8`](https://github.com/kuituoshi/docker/blob/master/springboot/8/Dockerfile)
+* [`11-openjdk`](https://github.com/kuituoshi/docker/blob/master/springboot/11-openjdk/Dockerfile)
 
 # What is changed
 
