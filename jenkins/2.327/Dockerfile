@@ -6,12 +6,12 @@ USER root
 
 #config jenkins
 ENV JENKINS_HOME /var/lib/jenkins
-ENV JENKINS_VER latest
+ENV JENKINS_VER 2.327
 WORKDIR ${CATALINA_HOME}
 RUN set -ex \
-    && apk add --no-cache curl \
+    && apk add --no-cache curl 'su-exec>=0.2' \
     && curl -L https://mirrors.aliyun.com/jenkins/war/${JENKINS_VER}/jenkins.war -o jenkins.war \
-    && mkdir -p webapps/ROOT \
+    && mkdir -p ${JENKINS_HOME}\
     && unzip jenkins.war -d webapps/ROOT \
     && rm -f jenkins.war \
     && apk del curl
@@ -20,5 +20,5 @@ RUN set -ex \
 #install git and svn and so on
 RUN set -ex \
     && apk add --no-cache git subversion openssh-client sshpass
-    
-USER tomcat
+
+COPY run.sh /usr/local/bin/

@@ -1,5 +1,5 @@
 jenkins:
-  image: changel.cn/jenkins:2.204.2
+  image: changel.cn/jenkins:2.327
   restart: always
   container_name: jenkins
 
