@@ -10,6 +10,9 @@ RUN set -ex \
 	&& adduser -G java -S -D -u 1000 java \
 	&& apk add --no-cache 'su-exec>=0.2'
 
+RUN set -ex \
+	&& mkdir /docker-entrypoint-init.d
+	
 WORKDIR ${SPRINGBOOT_HOME}
 COPY run.sh /usr/local/bin/
 
