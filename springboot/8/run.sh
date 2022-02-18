@@ -18,7 +18,7 @@ process_init_file() {
 : ${SPRINGBOOT_TZDATE:-Asia/Shanghai}
 
 : ${JAVA_OPTS:=-Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 -Djava.security.egd=file:/dev/./urandom}
-
+: ${JAVA_OPTS_EXTRA:-}
 
 if [ "${SPRINGBOOT_ACTIVE_PROFILE:+x}" = "x" ];then
 	SPRINGBOOT_OPTS="${SPRINGBOOT_OPTS} --spring.profiles.active=${SPRINGBOOT_ACTIVE_PROFILE}"
@@ -37,9 +37,7 @@ done
 exec su-exec java \
      java -Xms${SPRINGBOOT_MEMORY} \
      -Xmx${SPRINGBOOT_MEMORY} \
-     -Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 \
-     -Djava.security.egd=file:/dev/./urandom \
-     ${JAVA_OPTS} \
+     ${JAVA_OPTS} ${JAVA_OPTS_EXTRA}\
      -jar ${SPRINGBOOT_HOME}/${SPRINGBOOT_JAR_NAME} \
      ${SPRINGBOOT_OPTS} \
      --server.port=${SPRINGBOOT_PORT}

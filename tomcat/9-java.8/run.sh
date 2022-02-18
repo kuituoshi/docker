@@ -15,6 +15,7 @@ process_init_file() {
 : ${TOMCAT_TZDATE:-Asia/Shanghai}
 
 : ${JAVA_OPTS:=-server -Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 -Djava.security.egd=file:/dev/./urandom}
+: ${JAVA_OPTS_EXTRA:-}
 : ${CATALINA_OUT:=/dev/null}
 
 
@@ -31,7 +32,7 @@ if [ "${TOMCAT_TZDATE:+x}" = "x" ];then
 	ln -sf /usr/share/zoneinfo/${TOMCAT_TZDATE} /etc/localtime
 fi
 
-export JAVA_OPTS="-Dhttp.port=${TOMCAT_PORT} -Xms${TOMCAT_MEMORY} -Xmx${TOMCAT_MEMORY} ${JAVA_OPTS}"
+export JAVA_OPTS="-Dhttp.port=${TOMCAT_PORT} -Xms${TOMCAT_MEMORY} -Xmx${TOMCAT_MEMORY} ${JAVA_OPTS} ${JAVA_OPTS_EXTRA}"
 export CATALINA_OUT=${CATALINA_OUT}
 
 # Run scripts in docker-entrypoint-init.d
