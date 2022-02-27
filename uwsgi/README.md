@@ -5,6 +5,8 @@
 * [`3.6`](https://github.com/kuituoshi/docker/blob/master/uwsgi/3.6/Dockerfile)
 * [`3.7-alpine`](https://github.com/kuituoshi/docker/blob/master/uwsgi/3.7-alpine/Dockerfile)
 * [`3.6-alpine`](https://github.com/kuituoshi/docker/blob/master/uwsgi/3.6-alpine/Dockerfile)
+* [`3.7-bullseye`](https://github.com/kuituoshi/docker/blob/master/uwsgi/3.7-bullseye/Dockerfile)
+* [`3.7-tdlib-1.8.0`](https://github.com/kuituoshi/docker/blob/master/uwsgi/3.7-tdlib-1.8.0/Dockerfile)
 
 
 
