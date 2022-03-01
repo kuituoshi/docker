@@ -1,25 +1,25 @@
 # V2RAY
 
-* [`4.23.1`](https://github.com/kuituoshi/docker/blob/master/v2ray/4.23.1/Dockerfile)
+* [`5.0.3-vmess`](https://github.com/kuituoshi/docker/blob/master/v2ray/5.0.3-vmess/Dockerfile)
+* [`5.0.3-vless`](https://github.com/kuituoshi/docker/blob/master/v2ray/5.0.3-vless/Dockerfile)
 * [`tls-ws`](https://github.com/kuituoshi/docker/blob/master/v2ray/tls-ws/Dockerfile)
 
 
 ## What is changed
 
-* Clone from `v2ray/official`
+* Clone from `teddysun/v2ray`
 
 * Change default cofiguration json file
 
-* Export 4443 port by default
-
 * Inbound setting is `ws` network, path: `/websocket`, put nginx at front and ust TLS ,this is best choice
 
-* Default Id is `df4d5522-a1ea-4a1a-a551-ef5cf40330b0`, change it before use
 
 
-## tls-ws
+## VMESS ENV
 
-* Out of the box
-
-* `V2RAY_UUID` and `V2RAY_DOMAIN` env is required , if you want to change port, change `V2RAY_PORT`
-
+* `V2RAY_UUID` create random uuid if not specify
+* `V2RAY_DOMAIN` default is `ws.flyaway2oversea.com`, if you use public certificate, put `server.crt` and `server.key` in /etc/v2ray/certs/
+* `V2RAY_PORT` default is `443`
+* `V2RAY_TIMEOUT` default is `600` seconds
+* `V2RAY_VMESS_AEAD_FORCED` default is `false`, see [VmessAEAD](https://github.com/233boy/v2ray/issues/812)
+* `V2RAY_LOG_LEVEL` default is `warning`
