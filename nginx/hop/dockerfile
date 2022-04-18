@@ -1,0 +1,7 @@
+#docker build -t changel/nginx:hop . && docker push changel/nginx:hop
+FROM changel/nginx:1.15
+
+COPY files /etc/nginx/
+COPY docker-compose.sh /usr/local/bin/
+
+CMD ["docker-compose.sh"]

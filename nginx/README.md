@@ -4,6 +4,7 @@
 * [`1.16-header`](https://github.com/kuituoshi/docker/blob/master/nginx/1.16-header/Dockerfile)
 * [`confd`](https://github.com/kuituoshi/docker/blob/master/nginx/confd/Dockerfile)
 * [`proxy`](https://github.com/kuituoshi/docker/blob/master/nginx/proxy/Dockerfile)
+* [`hop`](https://github.com/kuituoshi/docker/blob/master/nginx/hop/Dockerfile)
 
 ## What is changed
 
@@ -33,3 +34,16 @@
 * Default value: NGINX_PORT=8080, NGINX_PROXY_PORTS=80 443, NGINX_DNS=8.8.8.8, NGINX_WHITE_LISTS=all
 
 * For security , set `NGINX_WHITE_LISTS` will only allow client in this lists to connect your proxy
+
+
+*hop*
+
+* TCP Proxy
+
+* Default listen port is `443`
+
+* `PROXY_SERVER_IP` `PROXY_SERVER_PORT` set up proxy server info
+
+* `NGINX_ACCESS_CIDR` Control access using cidr ,default is `0.0.0.0/0` allow all flow
+
+
