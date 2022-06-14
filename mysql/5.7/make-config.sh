@@ -5,6 +5,7 @@
 : ${SET_MYSQLD_FILE:=no}
 : ${SET_MYSQLD_MASTER:=no}
 : ${SET_MYSQLD_SLAVE:=no}
+: ${SET_MYSQLD_SLAVE_MASTER_NAME:=masterdb}
 : ${SET_MYSQLD_REPL_PASSWORD:=repl}
 
 #standalone
@@ -101,11 +102,11 @@ if [ "${SET_MYSQLD_FILE}" == "no" -a "$1" == "mysqld" ];then
                         if [ ! -d "${MYSQLD_DATADIR}/mysql" ]; then
                             cat <<-EOSQL >/docker-entrypoint-initdb.d/create_user.sql
                                 INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so';
-                                CHANGE MASTER TO MASTER_HOST='masterdb',
+                                CHANGE MASTER TO MASTER_HOST='${SET_MYSQLD_SLAVE_MASTER_NAME}',
                                 MASTER_USER='repl',
                                 MASTER_PASSWORD='${SET_MYSQLD_REPL_PASSWORD}',
-                                MASTER_AUTO_POSITION=1 for CHANNEL 'masterdb';
-                                start slave for channel 'masterdb';
+                                MASTER_AUTO_POSITION=1 for CHANNEL '${SET_MYSQLD_SLAVE_MASTER_NAME}';
+                                start slave for channel '${SET_MYSQLD_SLAVE_MASTER_NAME}';
 							EOSQL
                             cat <<-"EOSQL" >/docker-entrypoint-initdb.d/zz-enable-semi.sh
                                 #!/bin/bash
@@ -117,8 +118,8 @@ if [ "${SET_MYSQLD_FILE}" == "no" -a "$1" == "mysqld" ];then
                             if [ "${SET_MYSQLD_PULL_PASSWORD:-x}" != "x" ];then
                                 cat <<-"EOSQL" >/docker-entrypoint-initdb.d/aa-pull-master.sh
                                     #!/bin/bash
-                                    get_databases=$(mysql -uroot -p${SET_MYSQLD_PULL_PASSWORD} --host=masterdb  -e "show databases;"  |grep -E -v "Database|information_schema|mysql|performance_schema|sys" )
-                                    mysqldump --single-transaction -uroot -p${SET_MYSQLD_PULL_PASSWORD} --default-character-set=utf8 --routines --events --triggers --master-data=2 --host=masterdb --databases ${get_databases} | "${mysql[@]}"
+                                    get_databases=$(mysql -uroot -p${SET_MYSQLD_PULL_PASSWORD} --host=${SET_MYSQLD_SLAVE_MASTER_NAME}  -e "show databases;"  |grep -E -v "Database|information_schema|mysql|performance_schema|sys" )
+                                    mysqldump --single-transaction -uroot -p${SET_MYSQLD_PULL_PASSWORD} --default-character-set=utf8 --routines --events --triggers --master-data=2 --host=${SET_MYSQLD_SLAVE_MASTER_NAME} --databases ${get_databases} | "${mysql[@]}"
 								EOSQL
                                 chmod +x /docker-entrypoint-initdb.d/aa-pull-master.sh
                             fi
