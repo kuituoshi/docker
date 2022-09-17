@@ -33,6 +33,13 @@ RUN set -ex \
 RUN set -ex \
 	&& mkdir /docker-entrypoint-init.d
 	
+ENV JMX_EXPORTER_VERSION="0.17.0"
+RUN set -ex \
+	&& mkdir -p ${JAVA_HOME}/lib/jmx \
+	&& wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar -O ${JAVA_HOME}/lib/jmx/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
+	&& echo 'rules:' >${JAVA_HOME}/lib/jmx/jmx_prometheus.yaml \
+	&& echo '- pattern: ".*"' >>${JAVA_HOME}/lib/jmx/jmx_prometheus.yaml
+	
 WORKDIR ${CATALINA_HOME}
 
 COPY server.xml conf/

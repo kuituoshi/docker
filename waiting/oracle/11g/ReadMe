@@ -1,2 +1,4 @@
 1，默认只是启动了ssh服务，启动后需要手动运行oracle启动命令 su - oracle -lc "$ORACLE_HOME/bin/dbstart"
 2，使用前如果需要保存数据，则需要将/database都拷贝到宿主机上，然后映射volume, chown -R oracle:oinstall /database
+
+https://github.com/MaksymBilenko/docker-oracle-ee-11g/blob/master/entrypoint.sh

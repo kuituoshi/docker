@@ -18,6 +18,12 @@ process_init_file() {
 : ${SPRINGBOOT_OPTS:-x}
 : ${SPRINGBOOT_TZDATE:-Asia/Shanghai}
 
+#JMX Configuration
+: ${JMX_EXPORTER_ENABLE:=no}
+: ${JMX_EXPORTER_PORT:=8088}
+: ${JMX_EXPORTER_USERNAME:=jmx_exporter}
+: ${JMX_EXPORTER_PASSWORD:=jmx_exporter}
+
 : ${JAVA_OPTS:=-Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 -Djava.security.egd=file:/dev/urandom}
 : ${JAVA_OPTS_EXTRA:-}
 
@@ -28,6 +34,12 @@ fi
 # must create /logs directory which java have write permission first
 if [ "${SPRINGBOOT_PRINT_GC}" == "yes" ];then
      JAVA_OPTS="${JAVA_OPTS} -Xloggc:/logs/gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
+fi
+
+if [ "${JMX_EXPORTER_ENABLE}" == "yes" ];then
+     echo "username: ${JMX_EXPORTER_USERNAME}" >>${JAVA_HOME}/lib/jmx/jmx_prometheus.yaml
+     echo "password: ${JMX_EXPORTER_PASSWORD}" >>${JAVA_HOME}/lib/jmx/jmx_prometheus.yaml
+     JAVA_OPTS="${JAVA_OPTS} -javaagent:${JAVA_HOME}/lib/jmx/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar=${JMX_EXPORTER_PORT}:${JAVA_HOME}/lib/jmx/jmx_prometheus.yaml"
 fi
 
 if [ "${SPRINGBOOT_TZDATE:+x}" = "x" ];then

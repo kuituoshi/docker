@@ -77,10 +77,11 @@ if [ "${SET_MYSQLD_FILE}" == "no" -a "$1" == "mysqld" ];then
                         GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO 'repl'@'%';
 					EOSQL
                 fi
-                if [ "${MYSQLD_RPL_SEMI_SYNC_MASTER_ENABLED:-x}" == "x" ];then
-                    echo "rpl_semi_sync_master_enabled = ON" >> ${config_file}
-                    echo 'plugin-load="rpl_semi_sync_master=semisync_master.so"' >> ${config_file}
-                fi
+
+                ## setup semi sync by default
+                echo 'plugin-load="rpl_semi_sync_master=semisync_master.so"' >> ${config_file}
+                test "${MYSQLD_RPL_SEMI_SYNC_MASTER_ENABLED:-x}" == "x" && echo "rpl_semi_sync_master_enabled = ON" >> ${config_file}
+                
                 echo "Starting Master Server...."
         elif [ "${SET_MYSQLD_SLAVE}" == "yes" ];then
                 if [ "${SET_MYSQLD_SLAVE_MASTER_NAME:-x}" == "x" ];then
@@ -121,10 +122,9 @@ if [ "${SET_MYSQLD_FILE}" == "no" -a "$1" == "mysqld" ];then
                     fi
                 fi
                 ## open semisync by default
-                if [ "${MYSQLD_RPL_SEMI_SYNC_SLAVE_ENABLED:-x}" == "x" ];then
-                    echo "rpl_semi_sync_slave_enabled = ON" >> ${config_file}
-                    echo 'plugin-load="rpl_semi_sync_slave=semisync_slave.so"' >> ${config_file}
-                fi
+                echo 'plugin-load="rpl_semi_sync_slave=semisync_slave.so"' >> ${config_file}
+                test "${MYSQLD_RPL_SEMI_SYNC_SLAVE_ENABLED:-x}" == "x" && echo "rpl_semi_sync_slave_enabled = ON" >> ${config_file}
+
                 echo "Starting Slave Server...."
         else
                 echo "Starting standalone Server...."
