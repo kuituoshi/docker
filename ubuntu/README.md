@@ -1,7 +1,7 @@
 # UBUNTU
 
-* [`18.04`, `latest`](https://github.com/kuituoshi/docker/blob/master/ubuntu/18.04/Dockerfile)
-* [`16.04`](https://github.com/kuituoshi/docker/blob/master/ubuntu/16.04/Dockerfile)
+* [`18.04`](https://github.com/kuituoshi/docker/blob/master/ubuntu/18.04/Dockerfile)
+* [`20.04`](https://github.com/kuituoshi/docker/blob/master/ubuntu/20.04/Dockerfile)
 
 
 ## What is changed
