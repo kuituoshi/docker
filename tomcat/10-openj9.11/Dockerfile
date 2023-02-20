@@ -4,7 +4,7 @@ MAINTAINER changel <changel@changel.cn>
 
 # install tomcat
 ENV TOMCAT_MAIN_VERSION=10
-ENV TOMCAT_VERSION=10.0.16
+ENV TOMCAT_VERSION=10.1.5
 ENV LANG="en_US.UTF-8" CATALINA_HOME="/usr/local/tomcat"
 ENV PATH="${CATALINA_HOME}/bin:$PATH"
 RUN set -ex \
