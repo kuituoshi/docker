@@ -8,7 +8,7 @@ RUN set -ex \
 
 
 COPY nginx/nginx.conf /etc/nginx/
-COPY nginx/index.html /usr/share/nginx/
+COPY html /usr/share/nginx/
 
 COPY files /etc/v2ray/
 
