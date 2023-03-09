@@ -1,0 +1,97 @@
+#cloud-config
+#reference1 https://ubuntu.com/server/docs/install/autoinstall-reference
+#reference2 https://curtin.readthedocs.io/en/latest/topics/storage.html#disk-command
+autoinstall:
+  version: 1
+  # 修改apt 服务地址
+  apt:
+    primary:
+    - arches: [default]
+      uri: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+  # network:
+  #   network:
+  #     version: 2
+  #     ethernets:
+  #       ens160:
+  #          dhcp4: yes
+  user-data:
+    # 配置时区
+    timezone: Asia/Shanghai
+    # 是否禁用 root账号
+    disable_root: false
+  # 配置用户，密码默认是1
+  identity:
+    hostname: linux-server
+    password: "$6$nbvBN4lISAQTWYGU$S936Xq59akBDVL04zdg5HAmkGrpOtlMFSEMqkipW66U8DnVwdq.Drissb4F9tnmASO.t/6Zk67HiifWksZWNB."
+    username: ubuntu
+  # 配置键盘
+  keyboard:
+    layout: us
+    variant: ''
+  locale: en_US.UTF-8
+  # 配置代理
+  proxy: ""
+  # 默认安装ssh server
+  ssh:
+    install-server: true
+  # 指定安装的包
+  packages:
+    - net-tools
+  late-commands:
+    - echo 'finish'
+  error-commands:
+    - echo 'error'
+  # 配置磁盘分区
+  storage:
+    grub:
+      reorder_uefi: False
+    config:
+      - id: disk0
+        name: main_disk
+        ptable: gpt
+        path: /dev/nvme0n1
+        wipe: superblock-recursive
+        preserve: false
+        type: disk
+        grub_device: true
+      - id: disk0-part1
+        number: 1
+        device: disk0
+        type: partition
+        size: 500MB
+        flag: boot
+        grub_device: true
+      - id: disk0-part2
+        number: 2
+        device: disk0
+        type: partition
+        size: 2GB
+      - id: disk0-part3
+        number: 3
+        device: disk0
+        type: partition
+        size: -1
+      - id: disk0-part1-format-efi
+        type: format
+        fstype: fat32
+        volume: disk0-part1
+      - id: disk0-part2-format-boot
+        type: format
+        fstype: ext4
+        volume: disk0-part2
+      - id: disk0-part3-format-root
+        type: format
+        fstype: ext4
+        volume: disk0-part3
+      - id: disk0-part1-mount-efi
+        type: mount
+        path: /boot/efi
+        device: disk0-part1-format-efi
+      - id: disk0-part2-mount-boot
+        type: mount
+        path: /boot
+        device: disk0-part2-format-boot
+      - id: disk0-part3-mount-root
+        type: mount
+        path: /
+        device: disk0-part3-format-root
