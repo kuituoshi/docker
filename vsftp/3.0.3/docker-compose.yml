@@ -1,12 +1,14 @@
 version: "2.2"
 services:
  vsftp:
-  image: changel.cn/vsftp:3.0.3
+  image: changel/vsftp:3.0.3
   restart: always
   container_name: vsftp
 
   ports:
    - "20-21:20-21"
    - "50000-50010:50000-50010"
+  environment:
+   - SET_VSFTPD_PASV_ADDRESS=127.0.0.1
   volumes:
-   - /data/vsftp:/data
+   - ~/docker/vsftp:/data
