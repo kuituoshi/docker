@@ -1,4 +1,4 @@
-FROM changel/tomcat:9-openj9.8
+FROM changel/tomcat:10-openj9.11
 
 MAINTAINER changel <changel@changel.cn>
 
@@ -8,7 +8,7 @@ RUN set -ex \
 
 #config jenkins
 ENV JENKINS_HOME /var/lib/jenkins
-ENV JENKINS_VER 2.331
+ENV JENKINS_VER 2.403
 ENV TOMCAT_MEMORY 1g
 WORKDIR ${CATALINA_HOME}
 RUN set -ex \
