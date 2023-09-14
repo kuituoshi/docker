@@ -28,3 +28,7 @@ RUN set -ex \
     && mkdir /root/.ssh \
     && echo "StrictHostKeyChecking no" >/root/.ssh/config \
     && echo "UserKnownHostsFile /dev/null" >>/root/.ssh/config
+
+RUN set -ex \
+    && pip install pywinrm \
+    && ansible-galaxy collection install ansible.windows

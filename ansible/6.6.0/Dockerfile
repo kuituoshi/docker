@@ -27,4 +27,8 @@ RUN set -ex \
     && apk add --no-cache openssh-client sshpass bash \
     && mkdir /root/.ssh \
     && echo "StrictHostKeyChecking no" >/root/.ssh/config \
-    && echo "UserKnownHostsFile /dev/null" >>/root/.ssh/config
+    && echo "UserKnownHostsFile /dev/null" >>/root/.ssh/config \
+
+RUN set -ex \
+    && pip install pywinrm \
+    && ansible-galaxy collection install ansible.windows
