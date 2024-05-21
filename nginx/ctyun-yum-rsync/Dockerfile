@@ -18,5 +18,6 @@ RUN set -ex \
 COPY files /etc/nginx/
 COPY docker-entrypoint.sh /usr/local/bin/
 COPY pull_yum_rsync.sh /usr/local/bin/
+COPY pull_yum_check.sh /usr/local/bin/
 
 CMD ["docker-entrypoint.sh"]

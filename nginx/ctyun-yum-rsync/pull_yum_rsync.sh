@@ -3,7 +3,7 @@
 #cloud3  #天翼云3.0资源池 系统为ctyunos2
 #xccloud #信创资源池      系统为kylin sp1 系统
 
-ClOUD_TYPE=${1:-cloud3}
+ClOUD_TYPE=${1:-cloud4}
 STEP=${2:-p2} ##p2/p3 #p2系统和平台组件 p3为镜像
 POOL_NAME=`hostname`   ## 这里 other 改成资源池名称即可；例如：jiangsu03
 PULL_FILE=rsync_yum.sh
