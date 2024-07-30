@@ -11,7 +11,7 @@ RUN set -ex \
 	&& echo '[global]' > /root/.pip/pip.conf \
 	&& echo 'index-url = http://mirrors.aliyun.com/pypi/simple/' >> /root/.pip/pip.conf \
 	&& echo '[install]' >> /root/.pip/pip.conf \
-	&& echo 'trusted-host=mirrors.aliyun.com' >> /root/.pip/pip.conf \
+	&& echo 'trusted-host=mirrors.aliyun.com' >> /root/.pip/pip.conf
 
 # update pip to lastest version
 RUN set -ex \
@@ -27,7 +27,7 @@ RUN set -ex \
     && apk add --no-cache openssh-client sshpass bash \
     && mkdir /root/.ssh \
     && echo "StrictHostKeyChecking no" >/root/.ssh/config \
-    && echo "UserKnownHostsFile /dev/null" >>/root/.ssh/config \
+    && echo "UserKnownHostsFile /dev/null" >>/root/.ssh/config
 
 RUN set -ex \
     && pip install pywinrm \
