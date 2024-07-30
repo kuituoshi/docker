@@ -1,11 +1,17 @@
 #!/bin/bash
 
-RESET='\033[0m'
-RED='\033[38;5;1m'
-GREEN='\033[38;5;2m'
-YELLOW='\033[38;5;3m'
-MAGENTA='\033[38;5;5m'
-CYAN='\033[38;5;6m'
+RSYNC_SERVER_IP=${1:-124.236.120.248}
+RSYNC_USER=${2:-rsync_backup}
+RSYNC_PASSWORD=${3:-RSYNC_BACKUP_PASSWD}
+
+CTyunPath=/data/repo/yum/ctyun
+
+RESET=''
+RED=''
+GREEN=''
+YELLOW=''
+MAGENTA=''
+CYAN=''
 
 stderr_print() {
     local bool="${BITNAMI_QUIET:-false}"
@@ -20,38 +26,62 @@ log() {
     stderr_print "${CYAN}${MODULE:-} ${MAGENTA}$(date "+%T.%2N ")${RESET}${*}"
 }
 info() {
-    log "${GREEN}INFO ${RESET} ==> ${*}"
-}
-warn() {
-    log "${YELLOW}WARN ${RESET} ==> ${*}"
+    log "INFO ==> ${*}"
 }
 error() {
-    log "${RED}ERROR${RESET} ==> ${*}"
+    log "ERROR ==> ${*}"
 }
 
 sync_yum(){
     sync_path=$1
-    rsync --delete --partial -avzuP rsync_backup@124.236.120.248::data/${sync_path} /data/repo/yum/ctyun/${sync_path} --password-file=/etc/rsync.password
+    rsync --delete -avzP ${RSYNC_USER}@${RSYNC_SERVER_IP}::data/${sync_path} ${CTyunPath}/${sync_path} --password-file=/etc/sync.pwd
 }
 
-cd /data/repo/yum/ctyun
-curl -sSL http://124.236.120.248:50001/ctyun/yum_size.txt -o /tmp/yum_size.txt
-log "Get yum size file from official repository"
+get_valid_line(){
+    valid_lines=""
+    while read -r line;do
+        path=$(echo "$line"|awk '{print $2}')
+        size=$(echo "$line"|awk '{print $1}')
+        if [[ ! $size =~ ^[0-9]+(\.[0-9]+)?(G|M)$ ]];then
+            continue
+        fi
+        if [ "$path" == "total" ];then
+            continue
+        fi
+        valid_lines+="${size} ${path}\n"
+    done<$1
+    echo -e ${valid_lines}
+}
 
-while read -r line;do
+#####################RUNNING##############################
+# make rsync password file
+echo "${RSYNC_PASSWORD}" >/etc/sync.pwd
+chmod 400 /etc/sync.pwd
+
+# make sure ctyun path exists
+test -d ${CTyunPath} || mkdir -p ${CTyunPath}
+
+# sync yum size and add new directory in it
+sync_yum yum_size.txt
+echo '1G offline-pkgs/' >>${CTyunPath}/yum_size.txt
+echo '1G ctyunos/ctyunkylinos/' >>${CTyunPath}/yum_size.txt
+echo '1G xccloud/kylin_sp3/' >>${CTyunPath}/yum_size.txt
+echo '1G images/images-os/base/' >>${CTyunPath}/yum_size.txt
+
+
+# start to sync
+log "Ready for syncing repository"
+
+get_valid_line ${CTyunPath}/yum_size.txt |while read -r line;do
     path=$(echo "$line"|awk '{print $2}')
     size=$(echo "$line"|awk '{print $1}')
-    if [[ ! $size =~ ^[0-9]+(\.[0-9]+)?(G|M)$ ]];then
-        continue
-    fi
-    if [ ! -e $path ];then
-        continue
-    fi
-    local_size=$(du -sh $path|awk '{print $1}')
-    info "local size: ${local_size}, remote size: $size, path: $path"
+    local_path=${CTyunPath}/$path
+    test -d ${local_path} || mkdir -p ${local_path}
+    before_size=$(du -sh ${local_path}|awk '{print $1}')
     sync_yum $path
-    new_local_size=$(du -sh $path|awk '{print $1}')
-    info "local size: ${new_local_size}, remote size: $size, path: $path"
-done</tmp/yum_size.txt
+    after_size=$(du -sh ${local_path}|awk '{print $1}')
+    info "before_size: ${before_size} , after_size: ${after_size}, remote_size: $size, path: $path"
+done
 
 info "sync finished"
+rm -f /etc/sync.pwd
