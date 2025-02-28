@@ -39,7 +39,14 @@ sync_yum(){
 
 get_valid_line(){
     valid_lines=""
+    start_tag=no
     while read -r line;do
+        if [ "${start_tag}" == "no" ];then
+          if echo "$line" |grep "CLOUD_TYPE=cloud4" >/dev/null;then
+              start_tag=yes
+          fi
+          continue
+        fi
         path=$(echo "$line"|awk '{print $2}')
         size=$(echo "$line"|awk '{print $1}')
         if [[ ! $size =~ ^[0-9]+(\.[0-9]+)?(G|M)$ ]];then
@@ -63,25 +70,28 @@ test -d ${CTyunPath} || mkdir -p ${CTyunPath}
 
 # sync yum size and add new directory in it
 sync_yum yum_size.txt
-echo '1G offline-pkgs/' >>${CTyunPath}/yum_size.txt
-echo '1G ctyunos/ctyunkylinos/' >>${CTyunPath}/yum_size.txt
-echo '1G xccloud/kylin_sp3/' >>${CTyunPath}/yum_size.txt
-echo '1G images/images-os/base/' >>${CTyunPath}/yum_size.txt
+cp ${CTyunPath}/yum_size.txt /tmp/yum_size.txt
+get_valid_line /tmp/yum_size.txt >/tmp/sync_list.txt
+echo '1G offline-pkgs/' >>/tmp/sync_list.txt
 
 
 # start to sync
-log "Ready for syncing repository"
+log "Ready for syncing repository,repository list as follow"
 
-get_valid_line ${CTyunPath}/yum_size.txt |while read -r line;do
+while read -r line;do
     path=$(echo "$line"|awk '{print $2}')
     size=$(echo "$line"|awk '{print $1}')
+    if [[ ! $size =~ ^[0-9]+(\.[0-9]+)?(G|M)$ ]];then
+        echo "skip null row"
+        continue
+    fi
     local_path=${CTyunPath}/$path
     test -d ${local_path} || mkdir -p ${local_path}
     before_size=$(du -sh ${local_path}|awk '{print $1}')
     sync_yum $path
     after_size=$(du -sh ${local_path}|awk '{print $1}')
     info "before_size: ${before_size} , after_size: ${after_size}, remote_size: $size, path: $path"
-done
+done</tmp/sync_list.txt
 
 info "sync finished"
 rm -f /etc/sync.pwd

@@ -1,4 +1,4 @@
-FROM nginx:1.22-alpine
+FROM fastcn-registry-changsha42.crs.ctyun.cn/library/nginx:1.22-alpine
 
 MAINTAINER changel <changel@changel.cn>
 
@@ -18,5 +18,6 @@ RUN set -ex \
 COPY files /etc/nginx/
 COPY docker-entrypoint.sh /usr/local/bin/
 COPY pull_yum_check.sh /usr/local/bin/
+COPY pull_yum_rsync.sh /usr/local/bin/
 
 CMD ["docker-entrypoint.sh"]
