@@ -1,4 +1,4 @@
-FROM changel/alpine:3.10
+FROM fastcn-registry-changsha42.crs.ctyun.cn/library/alpine:3.10
 
 MAINTAINER changel <changel@changel.cn>
 
